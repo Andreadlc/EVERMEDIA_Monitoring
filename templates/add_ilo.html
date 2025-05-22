@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<fieldset>
+    <legend>Ajouter un iLO</legend>
+    <form method="post">
+        <label for="ip">IP :</label>
+        <input type="text" id="ip" name="ip" required><br>
+
+        <label for="site">Site :</label>
+        <select id="site" name="site" required>
+              {% for site in sites %}
+                  <option value="{{ site }}">{{ site }}</option>
+              {% endfor %}
+        </select><br>
+
+
+        <label for="username">Nom d'utilisateur :</label>
+        <input type="text" id="username" name="username" required><br>
+
+        <label for="password">Mot de passe :</label>
+        <input type="password" id="password" name="password" required><br>
+
+        <input type="submit" value="Ajouter">
+    </form>
+</fieldset>
+<div class = "bloc_title">
+<h2>Liste des iLOs enregistrés</h2>
+</div>
+<table border="1" cellpadding="5" style="margin: auto; background-color: #fff; border-collapse: collapse;">
+    <tr style="background-color: #e0e0e0;">
+        <th>IP</th>
+        <th>Site</th>
+        <th>Nom d'utilisateur</th>
+        <th>Action</th>
+    </tr>
+    {% for ilo in ilos %}
+    <tr>
+        <td>{{ ilo.ip }}</td>
+        <td>{{ ilo.site }}</td>
+        <td>{{ ilo.username }}</td>
+        <td><a href="/delete/{{ ilo.ip }}">Supprimer</a></td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+{% endblock %}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Interface de Monitoring iLO</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="wrapper">
+
+
+<header>
+    Monitoring des serveurs iLO
+</header>
+
+<nav>
+    <a href="{{ url_for('index') }}">Accueil</a>
+    <a href="{{ url_for('add_site') }}">Site</a>
+    <a href="{{ url_for('add_ilo') }}">iLO</a>
+    <a href="http://192.168.129.128:3000/dashboards" target="_blank">Dashboard</a> <!-- ← adapter l’URL si besoin -->
+    {% if current_user.is_authenticated %}
+     <a href="{{ url_for('logout') }}">Se déconnecter</a>
+    {% endif %}
+
+
+</nav>
+
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+
+</div>
+
+<footer>
+    Interface de gestion iLO &copy; 2025 - EverMedia
+</footer>
+
+</body>
+</html>

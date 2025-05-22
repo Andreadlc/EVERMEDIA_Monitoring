@@ -1,0 +1,179 @@
+/* style.css */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1; /* pousse le footer vers le bas */
+}
+
+header {
+    background-color: #2c3e50;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+nav {
+    background-color: #34495e;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding: 0.75rem 0;
+    margin-bottom: 2rem;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+.container {
+    max-width: 400px;
+    margin: 2rem auto;
+    background-color: #f9f9f9;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.bloc_title{
+    text-align: center;
+
+}
+
+
+form {
+    width: 90%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+fieldset {
+    width: 20%;
+    margin: 4rem auto;
+    padding: 2rem;
+    border: 2px solid #34495e; /* bleu stylisé */
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    align-item: center;
+}
+
+legend {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #007BFF;
+    padding: 0 10px;
+    text-align: center;
+}
+
+.login-main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 90vh;
+}
+
+h1, h2 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+form input[type="text"],
+form input[type="password"],
+form input[type="submit"] {
+    display: block;
+    padding: 0.6rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+form input[type="submit"] {
+    background-color: #3498db;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+form input[type="submit"]:hover {
+    background-color: #2980b9;
+}
+
+
+.status-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 4rem auto;
+    width: 50%;
+    background-color: #f9f9f9;
+    padding: 2rem;
+    border-radius: 8px;
+    border: 2px solid #34495e;
+    text-align: center;
+}
+
+.status-indicator {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    margin-left: 10px;
+}
+
+.status-on {
+    background-color: #28a745; /* vert */
+}
+
+.status-off {
+    background-color: #dc3545; /* rouge */
+}
+
+.toggle-button {
+    padding: 0.8rem 2rem;
+    font-size: 1rem;
+    background-color: #007bff;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 1rem;
+}
+
+.toggle-button:hover {
+    background-color: #0056b3;
+}
+
+
+
+footer {
+    background-color: #2c3e50;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    position: relative;
+    margin-top: 2rem;
+    bottom: 0;
+    width: 100%;
+}
