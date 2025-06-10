@@ -10,7 +10,7 @@ app.secret_key = 'une_cle_secrete_bien_longue'
 ILO_FILE = 'ilos.json'
 SITE_FILE = 'sites.json'
 USERS_FILE = 'users.json'
-script_process = None
+
 
 # ----- Gestion iLO -----
 if os.path.exists(ILO_FILE):
@@ -82,12 +82,7 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-@app.route('/start_monitoring', methods=['POST'])
-@login_required
-@admin_required
-def start_monitoring():
-    subprocess.Popen(["python3", "multi_ilo_web.py"])
-    return redirect('/')
+
 
 @app.route('/sites', methods=['GET', 'POST'])
 @login_required
@@ -125,15 +120,10 @@ def delete_site(site):
                 json.dump(sites, f)
     return redirect('/sites')
 
-
-
-
 @app.route('/add', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def add_ilo():
-    global script_process
-
     with open(SITE_FILE, 'r') as f:
         sites = json.load(f)
 
@@ -153,16 +143,11 @@ def add_ilo():
         if not any(i['ip'] == ip for i in ilos):
             ilos.append(new_ilo)
             save_ilos()
-	#redemarre le script
-        if script_process and script_process.poll() is None:
-               script_process.terminate()
-        script_process = subprocess.Popen(["python3", "multi_ilo_web.py"])
 
         return redirect('/add')
 
     return render_template('add_ilo.html', sites=sites, ilos=ilos)
 
-script_process
 
 @app.route('/delete/<ip>')
 @login_required
@@ -177,20 +162,26 @@ def delete_ilo(ip):
 @login_required
 @admin_required
 def toggle_script():
-    global script_process
-    if script_process and script_process.poll() is None:
-        script_process.terminate()
-        script_process = None
+    import sys
+    print("TOGGLE SCRIPT appelé", flush=True)
+    result = subprocess.run(["systemctl", "is-active", "--quiet", "multi_ilo_web.service"])
+    print("Status actuel:", result.returncode, flush=True)
+    if result.returncode == 0:
+        subprocess.run(["sudo", "systemctl", "stop", "multi_ilo_web.service"])
+        print("Service arrêté", flush=True)
         return jsonify({"running": False})
     else:
-        script_process = subprocess.Popen(["python3", "multi_ilo_web.py"])
+        subprocess.run(["sudo", "systemctl", "start", "multi_ilo_web.service"])
+        print("Service démarré", flush=True)
         return jsonify({"running": True})
+
 
 @app.route('/script_status')
 @login_required
 def script_status():
-    global script_process
-    is_running = script_process is not None and script_process.poll() is None
+    # Vérifie le statut actuel du service systemd
+    result = subprocess.run(["systemctl", "is-active", "--quiet", "multi_ilo_web.service"])
+    is_running = (result.returncode == 0)
     return jsonify({"running": is_running})
 
 if __name__ == '__main__':
