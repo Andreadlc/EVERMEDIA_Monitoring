@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="bloc_title">
+      <h2>Gestion des utilisateurs</h2>
+    </div>
+    <!-- Formulaire pour ajouter un utilisateur -->
+    <form method="post" action="{{ url_for('manage_users') }}">
+        <label for="new_username">Nom d'utilisateur :</label>
+        <input type="text" id="new_username" name="new_username" required>
+
+        <label for="new_password">Mot de passe :</label>
+        <input type="password" id="new_password" name="new_password" required>
+
+        <label for="new_role">Rôle :</label>
+        <select name="new_role" id="new_role" required>
+            <option value="utilisateur">Utilisateur</option>
+            <option value="admin">Admin</option>
+        </select>
+
+        <button type="submit" name="add">Ajouter l'utilisateur</button>
+    </form>
+
+
+    <hr style= "margin: 7%;">
+
+    <!-- Liste des utilisateurs existants -->
+    <div class="bloc_title">
+       <h3>Utilisateurs enregistrés</h3>
+    
+    <table border="1" cellpadding="5">
+        <tr>
+            <th>Nom</th>
+            <th>Rôle</th>
+            <th>Action</th>
+        </tr>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.username }}</td>
+            <td>{{ user.role }}</td>
+            <td>
+                {% if user.username != current_user.id %}
+                    <form method="post" action="{{ url_for('manage_users') }}" style="display:inline;">
+                        <input type="hidden" name="delete" value="{{ user.username }}">
+                        <button type="submit">Supprimer</button>
+                    </form>
+                {% else %}
+                    <em>Impossible de se supprimer</em>
+                {% endif %}
+            </td>
+
+        </tr>
+        {% endfor %}
+    </table>
+   </div>
+</div>
+{% endblock %}

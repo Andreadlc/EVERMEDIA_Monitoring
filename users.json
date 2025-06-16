@@ -1,4 +1,1 @@
-[
-  {"username": "adrien", "password": "adrien2025*", "role": "admin"},
-  {"username": "user", "password": "user", "role": "utilisateur"}
-]
+[{"username": "adrien", "password": "scrypt:32768:8:1$4Uh07YW5iAiPTfNw$d23785c4eb56ce21addfe2b384accf360e20ff9aea0ff63cddb610fb0b0e3cefb2b8bc7ab790a7b86449838e93a6050096e9489b356c04b0e3ee9316c3b32d88", "role": "admin"}, {"username": "user", "password": "scrypt:32768:8:1$CJXXIqqd79GqDm6M$923b76e0a72c8ff8885607c32ec0ee75f19f712814f4118ad2aa3b10fa81e65e7f498bec6c7073a81b8104cbd0eda733b53cadd5bf046ee04de320e1a7d89725", "role": "utilisateur"}, {"username": "andrea", "password": "scrypt:32768:8:1$33QUnvcONWA1Qjxq$b1206323d5f058f46a84215a39097fa91d50300d2aa2239192a7b42e06d16661f8b5bbd1acf8980d60357a4882276c6eac5f33a41c2f3849f1b3a070ef74ea41", "role": "admin"}]

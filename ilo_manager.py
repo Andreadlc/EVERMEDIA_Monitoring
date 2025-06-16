@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request, redirect, Response, url_for, jsonify, session
+from flask import Flask, flash, render_template, request, redirect, Response, url_for, jsonify, session
 from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import os
 import subprocess
@@ -70,7 +71,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
         for user in users_data:
-            if user['username'] == username and user['password'] == password:
+            if user['username'] == username and check_password_hash(user['password'], password):
                 login_user(User(username, user['role']))
                 return redirect(url_for('index'))
         return render_template('login.html', error="Nom d'utilisateur ou mot de passe incorrect")
@@ -183,6 +184,46 @@ def script_status():
     result = subprocess.run(["systemctl", "is-active", "--quiet", "multi_ilo_web.service"])
     is_running = (result.returncode == 0)
     return jsonify({"running": is_running})
+
+
+@app.route('/manage_users', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def manage_users():
+    if request.method == 'POST':
+        if 'add' in request.form:
+            new_user = request.form['new_username']
+            new_pass = request.form['new_password']
+            new_role = request.form['new_role']
+            if new_user and new_pass and new_role:
+                if any(u['username'] == new_user for u in users_data):
+                    flash("Utilisateur déjà existant", "error")
+                else:
+                    users_data.append({
+                        "username": new_user,
+                        "password": generate_password_hash(new_pass),
+                        "role": new_role
+                    })
+                    with open(USERS_FILE, 'w') as f:
+                        json.dump(users_data, f)
+                    flash("Utilisateur ajouté avec succès", "success")
+
+        elif 'delete' in request.form:
+            to_delete = request.form['delete']
+            if to_delete == current_user.id:
+                flash("Impossible de supprimer votre propre compte.", "error")
+            else:
+                updated_users = [u for u in users_data if u['username'] != to_delete]
+                with open(USERS_FILE, 'w') as f:
+                    json.dump(updated_users, f)
+                flash(f"Utilisateur {to_delete} supprimé", "success")
+                users_data.clear()
+                users_data.extend(updated_users)
+
+    return render_template('manage_users.html', users=users_data)
+
+
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
