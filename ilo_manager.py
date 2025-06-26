@@ -1,3 +1,4 @@
+# === Importation des modules nécessaires ===
 from flask import Flask, flash, render_template, request, redirect, Response, url_for, jsonify, session
 from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -7,9 +8,13 @@ import subprocess
 import socket
 
 
+# === Initialisation de l'application Flask ===
+
 app = Flask(__name__)
 app.secret_key = 'une_cle_secrete_bien_longue'
 
+
+# === Fichiers de stockage (persistants) ===
 ILO_FILE = 'ilos.json'
 SITE_FILE = 'sites.json'
 USERS_FILE = 'users.json'
@@ -73,12 +78,17 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated
 
+
+# Page d'accueil (nécessite une connexion)
+
 @app.route('/')
 @login_required
 def index():
     ip = get_local_ip()
     return render_template('index.html', grafana_ip=ip)
 
+
+# Page de login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -91,6 +101,8 @@ def login():
         return render_template('login.html', error="Nom d'utilisateur ou mot de passe incorrect")
     return render_template('login.html')
 
+
+# Déconnexion
 @app.route('/logout')
 @login_required
 def logout():
@@ -98,7 +110,7 @@ def logout():
     return redirect(url_for('login'))
 
 
-
+# Ajout d’un site (admin uniquement)
 @app.route('/sites', methods=['GET', 'POST'])
 @login_required
 @admin_required
@@ -120,7 +132,7 @@ def add_site():
 
     return render_template('sites.html', sites=sites)
 
-
+# Suppression d’un site
 
 @app.route('/delete_site/<site>')
 @login_required
@@ -134,6 +146,8 @@ def delete_site(site):
             with open(SITE_FILE, 'w') as f:
                 json.dump(sites, f)
     return redirect('/sites')
+
+# Ajout d'un iLO
 
 @app.route('/add', methods=['GET', 'POST'])
 @login_required
@@ -163,7 +177,7 @@ def add_ilo():
 
     return render_template('add_ilo.html', sites=sites, ilos=ilos)
 
-
+# Suppression d'un iLO par IP
 @app.route('/delete/<ip>')
 @login_required
 @admin_required
@@ -173,6 +187,7 @@ def delete_ilo(ip):
     save_ilos()
     return redirect('/add')
 
+# Bascule (ON/OFF) du script multi_ilo_web.service
 @app.route('/toggle_script', methods=['POST'])
 @login_required
 @admin_required
@@ -199,7 +214,7 @@ def script_status():
     is_running = (result.returncode == 0)
     return jsonify({"running": is_running})
 
-
+# Page de gestion des utilisateurs : ajout / suppression
 @app.route('/manage_users', methods=['GET', 'POST'])
 @login_required
 @admin_required
