@@ -17,7 +17,7 @@
     <a href="{{ url_for('index') }}">Accueil</a>
     <a href="{{ url_for('add_site') }}">Site</a>
     <a href="{{ url_for('add_ilo') }}">iLO</a>
-    <a href="http://192.168.129.128:3000/dashboards" target="_blank">Dashboard</a> <!-- ← adapter l’URL si besoin -->
+    <a href="http://{{ grafana_ip }}:3000/dashboards" target="_blank">Dashboard</a> <!-- ← adapter l’URL si besoin -->
     {% if current_user.is_authenticated %}
        {% if current_user.get_role() == 'admin' %}
          <a href="{{ url_for('manage_users') }}">Utilisateurs</a>

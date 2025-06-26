@@ -4,6 +4,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import os
 import subprocess
+import socket
+
 
 app = Flask(__name__)
 app.secret_key = 'une_cle_secrete_bien_longue'
@@ -23,6 +25,17 @@ else:
 def save_ilos():
     with open(ILO_FILE, 'w') as f:
         json.dump(ilos, f)
+
+
+def get_local_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))  # connexion "fake" pour connaître la bonne interface
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except Exception:
+        return "127.0.0.1"
 
 # ----- Gestion utilisateurs -----
 login_manager = LoginManager()
@@ -63,7 +76,8 @@ def admin_required(f):
 @app.route('/')
 @login_required
 def index():
-    return render_template('index.html')
+    ip = get_local_ip()
+    return render_template('index.html', grafana_ip=ip)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
