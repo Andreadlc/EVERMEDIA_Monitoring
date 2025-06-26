@@ -1,3 +1,84 @@
+"""
+=======================================
+SCRIPT : multi_ilo_web.py (exporter Prometheus)
+=======================================
+
+DESCRIPTION :
+-------------
+Ce script Flask expose des métriques matérielles (Redfish/iLO) au format Prometheus, 
+afin de permettre un monitoring centralisé avec Grafana. Les métriques sont extraites 
+régulièrement depuis une liste de serveurs iLO définis dans le fichier `ilos.json`.
+
+Le script interroge l'API Redfish de chaque iLO pour collecter des informations sur :
+- l'état global du système,
+- les CPU,
+- la mémoire,
+- la température (CPU, Inlet, etc.),
+- les ventilateurs,
+- la batterie SmartStorage,
+- l'alimentation électrique,
+- les contrôleurs/disques de stockage,
+- les périphériques PCI.
+
+Les résultats sont mis en cache toutes les 60 secondes pour ne pas surcharger les iLO.
+
+FONCTIONNEMENT :
+----------------
+1. Le script démarre un serveur Flask sur le port 8000.
+2. À l'adresse `/metrics`, Prometheus peut récupérer les données mises en cache.
+3. Un thread de fond interroge chaque iLO en boucle toutes les 60 secondes.
+4. Les erreurs de communication sont également renvoyées comme métriques (préfixe `ilo_exporter_error`).
+
+FICHIERS ASSOCIÉS :
+-------------------
+- `ilos.json` : contient la liste des iLO à interroger (IP, site, identifiants)
+  Format :
+  [
+      {
+          "ip": "10.101.50.30",
+          "site": "site1",
+          "username": "admin",
+          "password": "motdepasse"
+      },
+      ...
+  ]
+
+DEPENDANCES :
+-------------
+- Python 3.x
+- Flask
+- prometheus_client
+- requests
+- urllib3
+
+INSTALLATION DES LIBRAIRIES :
+-----------------------------
+pip install flask prometheus_client requests urllib3
+
+UTILISATION :
+-------------
+python multi_ilo_web.py
+
+Puis, dans Prometheus, ajouter une cible vers :
+    http://<IP ou hostname>:8000/metrics
+
+EXEMPLE DE MÉTRIQUES EXPOSÉES :
+-------------------------------
+- ilo_cpu_info{ilo_ip="10.101.50.30", site="site1", model="Intel Xeon", state="Enabled", health="OK"} 1
+- ilo_temperature_celsius{ilo_ip="10.101.50.30", site="site1", sensor="cpu", name="cpu_1"} 42
+- ilo_memory_total_gb{ilo_ip="10.101.50.30", site="site1"} 128
+- ilo_exporter_error{ilo_ip="10.101.50.40", site="site2", error="Failed to fetch system summary"} 1
+
+AUTEUR :
+--------
+Développé dans le cadre d’un projet de supervision de serveurs iLO avec Grafana.
+
+Dernière mise à jour : juin 2025
+
+"""
+
+
+
 from flask import Flask, Response, request, redirect
 from prometheus_client import Gauge
 import threading
