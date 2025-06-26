@@ -93,7 +93,7 @@ app = Flask(__name__)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Fichier JSON pour persister les iLO ajoutés
-ILO_FILE = 'ilos.json'
+ILO_FILE = '/home/andrea/project/ilos.json'
 
 # Chargement initial des iLO
 if os.path.exists(ILO_FILE):
